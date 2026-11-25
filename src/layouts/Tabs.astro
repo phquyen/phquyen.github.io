@@ -17,8 +17,8 @@ const { active, title, description, canonical } = Astro.props;
 const profile = await getProfile();
 const topics = await getTopics();
 
-// "Hi, *Alpaca* here." -> the words between asterisks are shown in the accent colour.
-const greetingParts = profile.greeting.split(/\*([^*]+)\*/);
+// "*Data-scientist* by day" -> the words between asterisks are shown in the accent colour.
+const headlineParts = profile.headline.split(/\*([^*]+)\*/);
 
 const tabs = [
   { slug: "projects", label: "Projects", href: "/projects/" },
@@ -35,7 +35,7 @@ const buttons = [
 
 <Base title={title} description={description} canonical={canonical}>
   <div class="hero">
-    <h1>{greetingParts.map((part, i) => (i % 2 === 1 ? <span class="accent">{part}</span> : part))}</h1>
+    <h1>{headlineParts.map((part, i) => (i % 2 === 1 ? <span class="accent">{part}</span> : part))}</h1>
     <p>{profile.bio}</p>
     <div class="actions">
       <a class="btn" href={profile.resume}>Resume <Icon name="arrow-right" /></a>

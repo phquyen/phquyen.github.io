@@ -86,8 +86,8 @@ header.site ul a:hover, header.site .brand:hover { color: var(--color-accent); }
 :root[data-theme="light"] .theme-toggle .sun { display: none; }
 
 /* ---- Intro ---- */
-.hero { padding: var(--space-9) 0 var(--space-7); }
-.hero h1 { font-size: var(--text-hero); line-height: 1.02; margin: 0 0 var(--space-5); max-width: 14ch; }
+.hero { padding: var(--space-8) 0 var(--space-7); }
+.hero h1 { font-size: var(--text-hero); line-height: 1.05; margin: 0 0 var(--space-5); max-width: 24ch; text-wrap: balance; }
 .hero h1 .accent { color: var(--color-accent); }
 .hero p { font-size: var(--text-lg); color: var(--color-muted); max-width: 34rem; margin: 0 0 var(--space-6); }
 

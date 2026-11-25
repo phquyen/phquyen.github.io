@@ -11,7 +11,11 @@ const showDrafts = import.meta.env.DEV;
 
 export async function getProfile(): Promise<Profile> {
   const entry = await getEntry("profile", "profile");
-  if (!entry) throw new Error("src/content/profile.yaml is missing.");
+  if (!entry) {
+    throw new Error(
+      "src/content/profile.yaml could not be read. Check the first error message above: it names the line to fix.",
+    );
+  }
   return entry.data;
 }
 

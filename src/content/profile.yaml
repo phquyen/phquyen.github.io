@@ -3,9 +3,8 @@
 # Put text in "double quotes". An empty value ("") hides that button.
 
 name: "Quyen Pham (Quinn)"
-greeting: "Hi, *Alpaca* here."   # words between *asterisks* show in the accent colour (pink)
-bio: "Data Scientist and Gym-rat"
-
+headline: "*Data-scientist* by day, *Gym-rat* by night"   # words between *asterisks* show in the accent colour (pink)
+bio: "Train models and muscles, both overfit if I'm not careful."  
 # ---- Buttons under the intro ----
 email: ""      # TODO: your public email, e.g. "you@example.com" (empty = no Email button)
 github: "https://github.com/phquyen"

@@ -79,7 +79,7 @@
   --text-lg:   1.15rem;
   --text-xl:   1.6rem;
   --text-stat: clamp(2rem, 5vw, 2.75rem);
-  --text-hero: clamp(2.5rem, 8vw, 4.5rem);
+  --text-hero: clamp(1.75rem, 4.5vw, 2.5rem); /* the big headline on the home page */
   --line-height: 1.6;
 
   /* ---- Spacing ---- */

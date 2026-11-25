@@ -25,7 +25,7 @@ const profile = defineCollection({
   }),
   schema: z.object({
     name: text("name", '"Quyen Pham (Quinn)"'),
-    greeting: text("greeting", `"Hi, I'm Quinn."`),
+    headline: text("headline", `"*Data scientist* by day"`), // big text at the top of the home page
     bio: text("bio", '"Based in Adelaide. ..."'),
     email: z
       .union([z.literal(""), z.email(hint("email", '"you@example.com"'))], hint("email", '"you@example.com"'))
