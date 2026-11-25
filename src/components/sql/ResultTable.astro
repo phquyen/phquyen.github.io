@@ -1,0 +1,31 @@
+---
+// A table of query results. The browser script in Workbench.astro builds the
+// same markup when you click Run, so both look identical.
+import type { ResultSet } from "../../lib/sql";
+
+type Props = { result: ResultSet; label: string };
+const { result, label } = Astro.props;
+const isNum = (v: unknown) => typeof v === "number";
+---
+
+{result.columns.length === 0 ? (
+  <p class="result-note">Query ran. No rows to show.</p>
+) : (
+  <>
+    <div class="result-scroll" role="region" aria-label={label} tabindex="0">
+      <table class="result-table">
+        <thead><tr>{result.columns.map((c) => <th scope="col">{c}</th>)}</tr></thead>
+        <tbody>
+          {result.rows.map((row) => (
+            <tr>{row.map((v) => (v === null ? <td class="null">NULL</td> : <td class:list={{ num: isNum(v) }}>{v}</td>))}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="result-note">
+      {result.total === result.rows.length
+        ? `${result.total.toLocaleString("en-AU")} ${result.total === 1 ? "row" : "rows"}`
+        : `Showing ${result.rows.length.toLocaleString("en-AU")} of ${result.total.toLocaleString("en-AU")} rows`}
+    </p>
+  </>
+)}

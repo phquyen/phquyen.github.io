@@ -22,6 +22,7 @@ const greetingParts = profile.greeting.split(/\*([^*]+)\*/);
 
 const tabs = [
   { slug: "projects", label: "Projects", href: "/projects/" },
+  { slug: "sql", label: "SQL", href: "/sql/" },
   ...topics.map((t) => ({ slug: t.slug, label: t.name, href: `/notes/${t.slug}/` })),
 ];
 

@@ -1,0 +1,15 @@
+---
+// /sql/<file>/: the SQL tab with one query loaded (one page per file in src/content/sql/).
+import SqlPage from "../../components/sql/SqlPage.astro";
+import { getQueries, type SqlQuery } from "../../lib/sql";
+
+export async function getStaticPaths() {
+  const queries = await getQueries();
+  return queries.map((query) => ({ params: { id: query.id }, props: { query } }));
+}
+
+type Props = { query: SqlQuery };
+const { query } = Astro.props;
+---
+
+<SqlPage query={query} />

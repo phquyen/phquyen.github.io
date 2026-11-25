@@ -16,9 +16,12 @@ npm run build    # type-check, validate content, build into dist/
 
 | Folder | What it does |
 | --- | --- |
-| `src/content/` | All content: `profile.yaml`, `projects/`, `notes/<Topic>/` |
+| `src/content/` | All content: `profile.yaml`, `projects/`, `sql/`, `notes/<Topic>/` |
 | `src/content.config.ts` | Required fields for each content file, and the error messages |
-| `src/pages/` | One file per web address (`/`, `/projects/…`, `/notes/…`, `/resume/`) |
+| `src/pages/` | One file per web address (`/`, `/projects/…`, `/sql/…`, `/notes/…`, `/resume/`) |
 | `src/layouts/` | Shared page frame (`Base`) and the intro + tabs (`Tabs`) |
-| `src/components/`, `src/lib/` | Project cards, icons, and helpers that read the content |
+| `src/components/`, `src/lib/` | Project cards, SQL workbench, icons, and helpers that read the content |
 | `src/styles/` | `theme.css` (colours, fonts, sizes) and `global.css` (layout) |
+| `scripts/make_sql_dataset.py` | Generates the fictional RideNest database (`public/sql/rideshare.sqlite`) and `docs/sql-dataset.md` |
+
+The SQL tab runs queries in the browser with [sql.js](https://sql.js.org) (SQLite compiled to WebAssembly), loaded only on `/sql/` pages.

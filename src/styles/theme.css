@@ -58,6 +58,7 @@
   --color-muted:        light-dark(#525252, #a3a3a3); /* secondary text */
   --color-border:       light-dark(#e5e5e5, #262626); /* thin card borders and lines */
   --color-border-hover: light-dark(#a3a3a3, #525252); /* card border on hover */
+  --color-danger:       light-dark(#b91c1c, #f87171); /* error messages (e.g. SQL errors) */
 
   /* ---- Alpaca logo (its pink parts use --color-accent) ---- */
   --logo-wool:   #f6e7d3; /* cream wool */

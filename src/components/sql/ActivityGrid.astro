@@ -1,0 +1,107 @@
+---
+// GitHub-style activity grid: the last 52 weeks (Mon–Sun columns), built at
+// build time from the dates of the query files. Darker = more queries that day.
+type Props = { counts: Map<string, number> };
+const { counts } = Astro.props;
+
+const WEEKS = 52;
+const DAY = 86_400_000;
+const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
+const fmt = (t: number) =>
+  new Date(t).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+
+const now = new Date();
+const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+const mondayIndex = (new Date(today).getUTCDay() + 6) % 7; // Mon = 0 … Sun = 6
+const start = today - mondayIndex * DAY - (WEEKS - 1) * 7 * DAY;
+
+type Cell = { day: string; tip: string; level: number; future: boolean };
+const weeks: Cell[][] = [];
+let total = 0;
+let busiest = { n: 0, t: 0 };
+for (let w = 0; w < WEEKS; w++) {
+  const week: Cell[] = [];
+  for (let d = 0; d < 7; d++) {
+    const t = start + (w * 7 + d) * DAY;
+    const n = counts.get(iso(t)) ?? 0;
+    const future = t > today;
+    if (!future) {
+      total += n;
+      if (n > busiest.n) busiest = { n, t };
+    }
+    week.push({
+      day: iso(t),
+      tip: `${n === 0 ? "No" : n} ${n === 1 ? "query" : "queries"} on ${fmt(t)}`,
+      level: Math.min(n, 4),
+      future,
+    });
+  }
+  weeks.push(week);
+}
+
+// Month labels: shown above the first week that starts in a new month.
+const months = weeks
+  .map((_, col) => ({ col, month: new Date(start + col * 7 * DAY).getUTCMonth() }))
+  .filter((m, i, all) => i === 0 || m.month !== all[i - 1].month)
+  .filter((m, i, all) => !(i === 0 && all[1] && all[1].col - m.col < 3)) // avoid a cramped first label
+  .map((m) => ({ col: m.col, label: new Date(Date.UTC(2000, m.month, 1)).toLocaleString("en-AU", { month: "short", timeZone: "UTC" }) }));
+
+const summary =
+  `${total} ${total === 1 ? "query" : "queries"} in the last 52 weeks` +
+  (busiest.n > 1 ? `. Busiest day: ${fmt(busiest.t)} with ${busiest.n}.` : ".");
+---
+
+<section class="activity" aria-labelledby="activity-title">
+  <div class="activity-head">
+    <h3 id="activity-title">Activity</h3>
+    <p><strong>{total.toLocaleString("en-AU")}</strong> {total === 1 ? "query" : "queries"} in the last 52 weeks</p>
+  </div>
+
+  <div class="activity-scroll" tabindex="0" role="region" aria-label="Activity grid, scrollable">
+    <div class="activity-frame" style={`--weeks: ${WEEKS}`}>
+      <div class="activity-months" aria-hidden="true">
+        {months.map((m) => <span style={`grid-column: ${m.col + 1}`}>{m.label}</span>)}
+      </div>
+      <div class="activity-days" aria-hidden="true">
+        <span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span>
+      </div>
+      <div class="activity-grid" role="img" aria-label={summary}>
+        {weeks.flat().map((c) =>
+          c.future ? <span class="day future"></span> : <span class={`day l${c.level}`} title={c.tip} data-tip={c.tip}></span>,
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="activity-legend" aria-hidden="true">
+    <span>Less</span><span class="day l0"></span><span class="day l1"></span><span class="day l2"></span><span class="day l3"></span><span class="day l4"></span><span>More</span>
+  </div>
+  <div class="activity-tip" role="tooltip" hidden></div>
+</section>
+
+<script>
+  // Nicer tooltip than the browser's built-in one, and start scrolled to the latest weeks.
+  const section = document.querySelector<HTMLElement>(".activity");
+  if (section) {
+    const scroll = section.querySelector<HTMLElement>(".activity-scroll")!;
+    const tip = section.querySelector<HTMLElement>(".activity-tip")!;
+    scroll.scrollLeft = scroll.scrollWidth;
+    section.querySelectorAll<HTMLElement>(".day[title]").forEach((d) => d.removeAttribute("title"));
+
+    const show = (cell: HTMLElement) => {
+      tip.textContent = cell.dataset.tip ?? "";
+      tip.hidden = false;
+      const r = cell.getBoundingClientRect();
+      const w = tip.offsetWidth;
+      const left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), window.innerWidth - w - 8);
+      tip.style.left = `${left}px`;
+      tip.style.top = `${r.top - tip.offsetHeight - 6}px`;
+    };
+    scroll.addEventListener("pointerover", (e) => {
+      const cell = (e.target as HTMLElement).closest<HTMLElement>(".day[data-tip]");
+      if (cell) show(cell); else tip.hidden = true;
+    });
+    scroll.addEventListener("pointerleave", () => (tip.hidden = true));
+    scroll.addEventListener("scroll", () => (tip.hidden = true));
+  }
+</script>

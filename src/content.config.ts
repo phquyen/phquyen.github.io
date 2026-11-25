@@ -109,4 +109,17 @@ const notes = defineCollection({
   }),
 });
 
-export const collections = { profile, projects, notes };
+// ---------- src/content/sql/*.md ----------
+// A short question in Markdown plus exactly one ```sql block (checked in src/lib/sql.ts).
+const sql = defineCollection({
+  loader: glob({ base: "./src/content/sql", pattern: "[^_]*.md" }),
+  schema: z.object({
+    title: text("title", '"Busiest day of the week"'),
+    date: z.coerce.date(hint("date", "2026-11-25")),
+    difficulty: z.enum(["easy", "medium", "hard"], hint("difficulty", '"easy" (or "medium" / "hard")')),
+    skills: z.array(z.string(), hint("skills", '["GROUP BY", "JOIN"]')).default([]),
+    draft: z.boolean(hint("draft", "false")).default(false),
+  }),
+});
+
+export const collections = { profile, projects, notes, sql };

@@ -1,0 +1,27 @@
+---
+// The whole SQL tab: workbench (top), activity grid (middle), query log (bottom).
+// Used by /sql/ (newest query) and /sql/<file>/ (that query).
+import { render } from "astro:content";
+import Tabs from "../../layouts/Tabs.astro";
+import Workbench from "./Workbench.astro";
+import ActivityGrid from "./ActivityGrid.astro";
+import QueryLog from "./QueryLog.astro";
+import { getQueries, getTablePreviews, runQuery, countByDay, type SqlQuery } from "../../lib/sql";
+
+type Props = { query?: SqlQuery };
+const { query } = Astro.props;
+
+const STARTER_SQL = "SELECT *\nFROM trips\nLIMIT 10;";
+const queries = await getQueries();
+const sql = query?.sql ?? STARTER_SQL;
+const [initial, previews] = await Promise.all([runQuery(sql), getTablePreviews()]);
+const Content = query ? (await render(query)).Content : undefined;
+---
+
+<Tabs active="sql" title={query ? `${query.data.title} · SQL` : "SQL"}
+  description="SQL practice on a fictional ride-hailing dataset, run in your browser.">
+  <h2 class="tab-heading">SQL workbench</h2>
+  <Workbench query={query} Content={Content} sql={sql} initial={initial} previews={previews} />
+  <ActivityGrid counts={countByDay(queries)} />
+  <QueryLog queries={queries} currentId={query?.id} />
+</Tabs>

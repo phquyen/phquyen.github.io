@@ -6,9 +6,9 @@ Everything you write lives in **`src/content/`**. You never need to touch the la
 src/content/
   profile.yaml        ← your name, intro, links, resume details
   projects/           ← one .md file per project
+  sql/                ← one .md file per SQL query (the SQL tab)
   notes/
-    Math/             ← each folder is a tab on the home page
-    SQL/
+    Math/             ← each notes folder is a tab on the home page
 ```
 
 Colours and fonts are in `src/styles/theme.css` (instructions at the top of that file).
@@ -47,28 +47,67 @@ Pages with 3 or more `##` headings get an "On this page" contents list beside th
 
 ## Add a note
 
-1. Pick the topic folder, e.g. `src/content/notes/SQL/`.
-2. Copy `example-note.md` in that folder and rename the copy, e.g. `window-functions.md`.
+1. Pick the topic folder, e.g. `src/content/notes/Math/`.
+2. Copy `example-note.md` in that folder and rename the copy, e.g. `limits.md`.
 3. Change the title, summary and date (`YYYY-MM-DD`), and write the note.
 4. Set `draft: false` to publish.
 
 **Maths:** always use double dollar signs. `$$x^2$$` inside a sentence stays inline; `$$` on their
 own lines (above and below the formula) makes a centred equation. A single `$` is just a dollar sign,
 so prices like $45/MWh are safe to write.
-**Code:** three backticks plus the language name, e.g. ` ```sql `, then the code, then ` ``` `.
-The Math and SQL example notes show both.
+**Code:** three backticks plus the language name, e.g. ` ```python `, then the code, then ` ``` `.
+The Math example note shows maths.
+
+## Add a SQL query
+
+The SQL tab (`/sql/`) has a workbench where visitors can edit and run queries against
+**RideNest**, a *fictional* ride-hailing dataset (tables `trips`, `riders`, `drivers`, `promos`).
+Every column is described in `docs/sql-dataset.md`.
+
+1. In `src/content/sql/`, copy `busiest-weekday.md` and rename the copy, e.g. `top-riders.md`.
+   It gets its own page: `/sql/top-riders/`.
+2. Fill in the lines at the top:
+   - `title`: a short name for the question.
+   - `date`: the day you wrote it (`YYYY-MM-DD`). It colours that day in the activity grid.
+   - `difficulty`: `"easy"`, `"medium"` or `"hard"`.
+   - `skills`: what it practises, e.g. `["JOIN", "Window functions"]`.
+3. Below the second `---`, write the question in a sentence or two, then **exactly one** SQL block:
+
+   ````md
+   Who are the 10 riders with the most completed trips?
+
+   ```sql
+   SELECT rider_id, COUNT(*) AS trips
+   FROM trips
+   WHERE status = 'completed'
+   GROUP BY rider_id
+   ORDER BY trips DESC
+   LIMIT 10;
+   ```
+   ````
+
+4. Preview with `npm run dev`, press **Run** to check it, then set `draft: false` and publish.
+
+The newest query opens first on `/sql/`; all published queries are listed in the query log,
+newest first. If a file has no SQL block (or more than one), the build stops and names the file.
+
+Use the SQLite dialect: e.g. `strftime('%w', requested_at)` for the weekday, `date(requested_at)` for the day.
+
+**Changing the dataset:** edit `scripts/make_sql_dataset.py`, then run `py -3 scripts/make_sql_dataset.py`.
+It rewrites `public/sql/rideshare.sqlite` and `docs/sql-dataset.md`. It always produces the same data.
 
 ## Add a new tab
 
 Create a new folder in `src/content/notes/`, e.g. `Statistics`, and put a note in it.
-The folder name becomes the tab name exactly as written (so `SQL` shows as "SQL"),
-and the address is lowercase: `/notes/statistics/`. Tabs appear in A–Z order after Projects.
+The folder name becomes the tab name exactly as written (so `Math` shows as "Math"),
+and the address is lowercase: `/notes/statistics/`. Notes tabs appear in A–Z order after Projects and SQL.
+Don't name a notes folder `SQL`: that tab already exists.
 
-A tab only appears on the live site once its folder has at least one note with `draft: false`.
+A notes tab only appears on the live site once its folder has at least one note with `draft: false`.
 
 ## Drafts
 
-`draft: true` hides a project or note from the **live site**. It still shows when you preview
+`draft: true` hides a project, note or SQL query from the **live site**. It still shows when you preview
 locally (with a "Draft" label), so you can check it before publishing.
 
 ## If something is wrong

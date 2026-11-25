@@ -1,0 +1,32 @@
+---
+// Every published query, newest first. Each links to its own page with the
+// query loaded in the workbench (works without JavaScript).
+import type { SqlQuery } from "../../lib/sql";
+import { formatDate } from "../../lib/content";
+
+type Props = { queries: SqlQuery[]; currentId?: string };
+const { queries, currentId } = Astro.props;
+---
+
+<section class="query-log" aria-labelledby="log-title">
+  <h3 id="log-title">Query log <span class="count">{queries.length}</span></h3>
+  {queries.length === 0 ? (
+    <p class="empty">No queries published yet.</p>
+  ) : (
+    <ol class="log-list">
+      {queries.map((q) => (
+        <li>
+          <a href={`/sql/${q.id}/#workbench`} aria-current={q.id === currentId ? "page" : undefined}>
+            <time datetime={q.data.date.toISOString().slice(0, 10)}>{formatDate(q.data.date)}</time>
+            <span class="log-title">
+              {q.data.title}
+              {q.data.draft && <span class="badge">Draft</span>}
+            </span>
+            <span class:list={["difficulty", q.data.difficulty]}>{q.data.difficulty}</span>
+          </a>
+          {q.data.skills.length > 0 && <ul class="tags" aria-label="Skills">{q.data.skills.map((s) => <li>{s}</li>)}</ul>}
+        </li>
+      ))}
+    </ol>
+  )}
+</section>

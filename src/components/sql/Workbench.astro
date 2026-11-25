@@ -1,0 +1,244 @@
+---
+// The SQL workbench: question + table previews (left), editor + results (right).
+// The first result is from running the saved query at build time; "Run" runs your
+// edited query in the browser with sql.js (SQLite compiled to WebAssembly).
+import type { render } from "astro:content";
+import ResultTable from "./ResultTable.astro";
+import { DOCS_URL, DB_URL, MAX_ROWS, type ResultSet, type SqlQuery, type TablePreview } from "../../lib/sql";
+import { formatDate } from "../../lib/content";
+
+type Props = {
+  query?: SqlQuery;
+  Content?: Awaited<ReturnType<typeof render>>["Content"];
+  sql: string;
+  initial: ResultSet;
+  previews: TablePreview[];
+};
+const { query, Content, sql, initial, previews } = Astro.props;
+---
+
+<section id="workbench" class="workbench" aria-labelledby="wb-title" data-db-url={DB_URL} data-max-rows={MAX_ROWS}>
+  <!-- Desktop: question + tables on the left, editor on the right.
+       Phones: question, then editor, then tables (see .workbench in global.css). -->
+    <div class="wb-panel wb-question">
+      <p class="wb-kicker">
+        Dataset: RideNest <span class="badge">Fictional data</span>
+        · <a href={DOCS_URL}>Data dictionary</a> · <a href={DB_URL} download>Download .sqlite</a>
+      </p>
+      <h3 id="wb-title">
+        {query ? query.data.title : "Explore the data"}
+        {query?.data.draft && <span class="badge">Draft</span>}
+      </h3>
+      {query && (
+        <p class="wb-meta">
+          <span class:list={["difficulty", query.data.difficulty]}>{query.data.difficulty}</span>
+          <time datetime={query.data.date.toISOString().slice(0, 10)}>{formatDate(query.data.date)}</time>
+        </p>
+      )}
+      <div class="wb-question-body">
+        {Content ? <Content /> : <p>Write any SQLite query against the four tables below, then press Run.</p>}
+      </div>
+      {query && query.data.skills.length > 0 && (
+        <ul class="tags" aria-label="Skills">{query.data.skills.map((s) => <li>{s}</li>)}</ul>
+      )}
+    </div>
+
+    <div class="wb-panel wb-tables">
+      <h4 class="wb-label" id="tables-label">Tables</h4>
+      <div class="wb-tablist" role="tablist" aria-labelledby="tables-label" hidden>
+        {previews.map((p, i) => (
+          <button type="button" role="tab" id={`tab-${p.name}`} aria-controls={`preview-${p.name}`}
+            aria-selected={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1}>{p.name}</button>
+        ))}
+      </div>
+      {previews.map((p) => (
+        <section class="wb-preview" id={`preview-${p.name}`} role="tabpanel" aria-labelledby={`tab-${p.name}`}>
+          <p class="wb-preview-title"><code>{p.name}</code> · {p.total.toLocaleString("en-AU")} rows · first 5 shown</p>
+          <ResultTable result={{ ...p, total: p.rows.length }} label={`First 5 rows of ${p.name}`} />
+        </section>
+      ))}
+    </div>
+
+    <div class="wb-panel wb-editor-panel">
+      <label class="wb-label" for="sql-editor">Query</label>
+      <textarea id="sql-editor" class="wb-editor" spellcheck="false" autocapitalize="off" autocomplete="off"
+        rows={Math.min(26, Math.max(8, sql.split("\n").length + 2))} aria-describedby="sql-help" data-original={sql}>{sql}</textarea>
+      <div class="wb-actions">
+        <button class="btn" type="button" id="sql-run" hidden>Run query</button>
+        <button class="btn secondary" type="button" id="sql-reset" hidden>Reset</button>
+        <p class="wb-status" id="sql-status" role="status" aria-live="polite">Result of the saved query</p>
+      </div>
+      <p class="wb-help" id="sql-help">
+        <span class="js-only" hidden>Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run. Every run starts from a fresh copy of the data.</span>
+        <noscript>Turn on JavaScript to edit and run queries.</noscript>
+      </p>
+      <div class="wb-error" id="sql-error" role="alert" hidden></div>
+      <div class="wb-result" id="sql-result">
+        {initial.error
+          ? <div class="wb-error"><strong>SQL error:</strong> {initial.error}</div>
+          : <ResultTable result={initial} label="Query result" />}
+      </div>
+    </div>
+</section>
+
+<script>
+  import type { SqlJsStatic } from "sql.js";
+
+  const root = document.querySelector<HTMLElement>("#workbench");
+  if (root) {
+    const DB_URL = root.dataset.dbUrl!;
+    const MAX_ROWS = Number(root.dataset.maxRows);
+    const editor = root.querySelector<HTMLTextAreaElement>("#sql-editor")!;
+    const runBtn = root.querySelector<HTMLButtonElement>("#sql-run")!;
+    const resetBtn = root.querySelector<HTMLButtonElement>("#sql-reset")!;
+    const status = root.querySelector<HTMLElement>("#sql-status")!;
+    const errorBox = root.querySelector<HTMLElement>("#sql-error")!;
+    const resultBox = root.querySelector<HTMLElement>("#sql-result")!;
+
+    // ---- Show the controls that need JavaScript ----
+    runBtn.hidden = false;
+    resetBtn.hidden = false;
+    root.querySelectorAll<HTMLElement>(".js-only").forEach((el) => (el.hidden = false));
+
+    // ---- Load sql.js + the database once (in the background, after the page is ready) ----
+    let ready: Promise<{ SQL: SqlJsStatic; bytes: Uint8Array }> | undefined;
+    const load = () =>
+      (ready ??= (async () => {
+        const [{ default: initSqlJs }, { default: wasmUrl }] = await Promise.all([
+          import("sql.js"),
+          import("sql.js/dist/sql-wasm.wasm?url"),
+        ]);
+        const [SQL, buffer] = await Promise.all([
+          initSqlJs({ locateFile: () => wasmUrl }),
+          fetch(DB_URL).then((r) => {
+            if (!r.ok) throw new Error(`Could not download the database (HTTP ${r.status}).`);
+            return r.arrayBuffer();
+          }),
+        ]);
+        return { SQL, bytes: new Uint8Array(buffer) };
+      })());
+    ("requestIdleCallback" in window ? requestIdleCallback : setTimeout)(() => load().catch(() => {}));
+
+    // ---- Results table (same markup as ResultTable.astro) ----
+    const renderResult = (columns: string[], rows: unknown[][], total: number) => {
+      resultBox.replaceChildren();
+      if (columns.length === 0) {
+        const p = document.createElement("p");
+        p.className = "result-note";
+        p.textContent = "Query ran. No rows to show.";
+        resultBox.append(p);
+        return;
+      }
+      const scroll = document.createElement("div");
+      scroll.className = "result-scroll";
+      scroll.setAttribute("role", "region");
+      scroll.setAttribute("aria-label", "Query result");
+      scroll.tabIndex = 0;
+      const table = document.createElement("table");
+      table.className = "result-table";
+      const head = table.createTHead().insertRow();
+      for (const c of columns) {
+        const th = document.createElement("th");
+        th.scope = "col";
+        th.textContent = c;
+        head.append(th);
+      }
+      const body = table.createTBody();
+      for (const row of rows) {
+        const tr = body.insertRow();
+        for (const v of row) {
+          const td = tr.insertCell();
+          if (v === null) { td.className = "null"; td.textContent = "NULL"; }
+          else {
+            if (typeof v === "number") td.className = "num";
+            td.textContent = v instanceof Uint8Array ? `(${v.length} bytes)` : String(v);
+          }
+        }
+      }
+      scroll.append(table);
+      const note = document.createElement("p");
+      note.className = "result-note";
+      note.textContent = total === rows.length
+        ? `${total.toLocaleString("en-AU")} ${total === 1 ? "row" : "rows"}`
+        : `Showing ${rows.length.toLocaleString("en-AU")} of ${total.toLocaleString("en-AU")} rows`;
+      resultBox.append(scroll, note);
+    };
+
+    const showError = (message: string) => {
+      errorBox.replaceChildren();
+      const strong = document.createElement("strong");
+      strong.textContent = "SQL error: ";
+      errorBox.append(strong, message);
+      errorBox.hidden = false;
+      resultBox.replaceChildren();
+    };
+
+    // ---- Run ----
+    const run = async () => {
+      const sql = editor.value.trim();
+      errorBox.hidden = true;
+      if (!sql) { showError("Write a query first."); status.textContent = "Nothing to run"; return; }
+      runBtn.disabled = true;
+      status.textContent = ready ? "Running…" : "Loading the SQL engine (first run only)…";
+      try {
+        const { SQL, bytes } = await load();
+        const db = new SQL.Database(bytes); // fresh copy every run
+        const t0 = performance.now();
+        try {
+          const results = db.exec(sql);
+          const ms = Math.max(1, Math.round(performance.now() - t0));
+          const last = results.at(-1);
+          const columns = last?.columns ?? [];
+          const values = last?.values ?? [];
+          renderResult(columns, values.slice(0, MAX_ROWS), values.length);
+          status.textContent = `${values.length.toLocaleString("en-AU")} ${values.length === 1 ? "row" : "rows"} · ${ms} ms`;
+        } finally {
+          db.close();
+        }
+      } catch (err) {
+        showError(err instanceof Error ? err.message : String(err));
+        status.textContent = "Query failed";
+      } finally {
+        runBtn.disabled = false;
+      }
+    };
+
+    runBtn.addEventListener("click", run);
+    editor.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+    });
+    resetBtn.addEventListener("click", () => {
+      editor.value = editor.dataset.original ?? "";
+      editor.focus();
+      status.textContent = "Query reset. Press Run to see its result.";
+    });
+
+    // ---- Table preview tabs (all previews show if JavaScript is off) ----
+    const tablist = root.querySelector<HTMLElement>(".wb-tablist")!;
+    const tabs = [...tablist.querySelectorAll<HTMLButtonElement>("[role=tab]")];
+    const panels = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls")!)!);
+    tablist.hidden = false;
+    root.classList.add("tabs-ready");
+    const select = (i: number, focus = false) => {
+      tabs.forEach((t, j) => {
+        t.setAttribute("aria-selected", String(i === j));
+        t.tabIndex = i === j ? 0 : -1;
+        panels[j].hidden = i !== j;
+      });
+      if (focus) tabs[i].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => select(i));
+      t.addEventListener("keydown", (e) => {
+        const n = tabs.length;
+        if (e.key === "ArrowRight") select((i + 1) % n, true);
+        else if (e.key === "ArrowLeft") select((i - 1 + n) % n, true);
+        else if (e.key === "Home") select(0, true);
+        else if (e.key === "End") select(n - 1, true);
+        else return;
+        e.preventDefault();
+      });
+    });
+    select(0);
+  }
+</script>
