@@ -4,7 +4,7 @@
 
 name: "Quyen Pham (Quinn)"
 greeting: "Hi, *Alpaca* here."   # words between *asterisks* show in the accent colour (pink)
-bio: "Turning messy data into answers people can actually use."
+bio: "Data Scientist and Gym-rat"
 
 # ---- Buttons under the intro ----
 email: ""      # TODO: your public email, e.g. "you@example.com" (empty = no Email button)
