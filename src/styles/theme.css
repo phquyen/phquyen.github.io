@@ -59,6 +59,12 @@
   --color-border:       light-dark(#e5e5e5, #262626); /* thin card borders and lines */
   --color-border-hover: light-dark(#a3a3a3, #525252); /* card border on hover */
 
+  /* ---- Alpaca logo (its pink parts use --color-accent) ---- */
+  --logo-wool:   #f6e7d3; /* cream wool */
+  --logo-muzzle: #fdf6ec; /* lighter muzzle */
+  --logo-ink:    #2b1d14; /* eyes, nose, mouth */
+  --logo-line:   #0a0a0a; /* outline */
+
   /* ---- Fonts ---- */
   --font-body:    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-heading: var(--font-body);

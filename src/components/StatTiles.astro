@@ -1,0 +1,16 @@
+---
+// Big key numbers from a project's `highlights` (value in the accent colour).
+type Props = { items: { value: string; label: string }[]; compact?: boolean };
+const { items, compact = false } = Astro.props;
+---
+
+{items.length > 0 && (
+  <ul class:list={["stats", { compact }]} aria-label="Key numbers">
+    {items.map((item) => (
+      <li>
+        <span class="value">{item.value}</span>
+        <span class="label">{item.label}</span>
+      </li>
+    ))}
+  </ul>
+)}

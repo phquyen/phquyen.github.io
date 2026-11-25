@@ -1,52 +1,72 @@
 ---
 // One page per project file: /projects/<filename>/
-// The page body is the Markdown below the --- block in the project file.
+// Header (title, numbers, links, picture), then the Markdown body with a
+// contents list beside it on wide screens, then previous/next project links.
 import "katex/dist/katex.min.css";
 import { render } from "astro:content";
+import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import Icon from "../../components/Icon.astro";
+import StatTiles from "../../components/StatTiles.astro";
 import { getProjects, type Project } from "../../lib/content";
 
 export async function getStaticPaths() {
   const projects = await getProjects();
-  return projects.map((project) => ({ params: { id: project.id }, props: { project } }));
+  return projects.map((project, i) => ({
+    params: { id: project.id },
+    props: { project, prev: projects[i - 1], next: projects[i + 1] },
+  }));
 }
 
-type Props = { project: Project };
-const { project } = Astro.props;
-const { title, summary, tools, github, demo, draft } = project.data;
-const { Content } = await render(project);
+type Props = { project: Project; prev?: Project; next?: Project };
+const { project, prev, next } = Astro.props;
+const { title, summary, tools, github, demo, draft, cover, cover_alt, highlights } = project.data;
+const { Content, headings } = await render(project);
+const contents = headings.filter((h) => h.depth === 2);
 ---
 
 <Base title={title} description={summary}>
   <a class="back" href="/projects/"><Icon name="arrow-left" /> All projects</a>
 
-  <div class="page-title">
+  <header class="project-head">
     <h1>{title} {draft && <span class="badge">Draft</span>}</h1>
-    <p>{summary}</p>
+    <p class="lead">{summary}</p>
 
-    {(tools.length > 0 || github || demo) && (
-      <dl class="meta">
-        {tools.length > 0 && (
-          <div>
-            <dt>Tools</dt>
-            <dd><ul class="tags">{tools.map((tool) => <li>{tool}</li>)}</ul></dd>
-          </div>
-        )}
-        {(github || demo) && (
-          <div>
-            <dt>Links</dt>
-            <dd class="actions">
-              {demo && <a class="btn" href={demo} target="_blank" rel="noopener">Live demo <Icon name="arrow-up-right" /></a>}
-              {github && <a class="btn secondary" href={github} target="_blank" rel="noopener">View code <Icon name="arrow-up-right" /></a>}
-            </dd>
-          </div>
-        )}
-      </dl>
+    {(demo || github) && (
+      <div class="actions">
+        {demo && <a class="btn" href={demo} target="_blank" rel="noopener">Live demo <Icon name="arrow-up-right" /></a>}
+        {github && <a class="btn secondary" href={github} target="_blank" rel="noopener">View code <Icon name="arrow-up-right" /></a>}
+      </div>
     )}
+    {tools.length > 0 && <ul class="tags" aria-label="Tools">{tools.map((tool) => <li>{tool}</li>)}</ul>}
+  </header>
+
+  <StatTiles items={highlights} />
+
+  {cover && (
+    <figure class="project-cover">
+      <Image src={cover} alt={cover_alt} widths={[640, 1040, 1600]} sizes="(max-width: 1072px) 100vw, 1040px" loading="eager" />
+    </figure>
+  )}
+
+  <div class:list={["article", { "has-toc": contents.length >= 3 }]}>
+    {contents.length >= 3 && (
+      <nav class="toc" aria-label="On this page">
+        <p>On this page</p>
+        <ol>{contents.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+      </nav>
+    )}
+    <section class="prose">
+      <Content />
+    </section>
   </div>
 
-  <section class="prose">
-    <Content />
-  </section>
+  {(prev || next) && (
+    <nav class="pager" aria-label="More projects">
+      {prev ? (
+        <a href={`/projects/${prev.id}/`}><span>Previous</span>{prev.data.title}</a>
+      ) : <span />}
+      {next && <a class="next" href={`/projects/${next.id}/`}><span>Next</span>{next.data.title}</a>}
+    </nav>
+  )}
 </Base>

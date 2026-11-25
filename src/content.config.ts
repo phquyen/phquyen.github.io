@@ -70,16 +70,31 @@ const profile = defineCollection({
 const projects = defineCollection({
   // Files starting with "_" (like _template.md) are ignored.
   loader: glob({ base: "./src/content/projects", pattern: "[^_]*.md" }),
-  schema: z.object({
-    title: text("title", '"Battery trading simulation"'),
-    summary: text("summary", '"One or two sentences for the card."'),
-    tools: z.array(z.string(), hint("tools", '["Python", "pandas"]')).default([]),
-    github: z.url(hint("github", '"https://github.com/phquyen/repo"')).optional(),
-    demo: z.url(hint("demo", '"https://example.com"')).optional(),
-    featured: z.boolean(hint("featured", "true")).default(false),
-    order: z.number(hint("order", "10")).default(100),
-    draft: z.boolean(hint("draft", "false")).default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: text("title", '"Battery trading simulation"'),
+      summary: text("summary", '"One or two sentences for the card."'),
+      tools: z.array(z.string(), hint("tools", '["Python", "pandas"]')).default([]),
+      github: z.url(hint("github", '"https://github.com/phquyen/repo"')).optional(),
+      demo: z.url(hint("demo", '"https://example.com"')).optional(),
+      // Optional picture for the card and the top of the page (path relative to the .md file).
+      cover: image().optional(),
+      cover_alt: z.string().default(""),
+      // Optional key numbers (up to 4), shown as big tiles on the card and the page.
+      highlights: z
+        .array(
+          z.object({
+            value: text("value", '"+47.5%"'),
+            label: text("label", '"profit vs a simple rule"'),
+          }),
+          hint("highlights", '[{ value: "+47.5%", label: "profit vs a simple rule" }]'),
+        )
+        .max(4, "has more than 4 items. Keep the 4 most important numbers.")
+        .default([]),
+      featured: z.boolean(hint("featured", "true")).default(false),
+      order: z.number(hint("order", "10")).default(100),
+      draft: z.boolean(hint("draft", "false")).default(false),
+    }),
 });
 
 // ---------- src/content/notes/<Topic>/*.md ----------

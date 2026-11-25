@@ -13,7 +13,7 @@ const { topic } = Astro.props;
 ---
 
 <Tabs active={topic.slug} title={`${topic.name} notes`}>
-  <h2 class="sr-only">{topic.name} notes</h2>
+  <h2 class="tab-heading">{topic.name} notes</h2>
   <ul class="note-list">
     {topic.notes.map((note) => (
       <li>

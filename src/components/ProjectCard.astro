@@ -1,25 +1,39 @@
 ---
+// A project card. Featured projects get the wide "spotlight" version with
+// their picture and key numbers; others get a compact card.
+import { Image } from "astro:assets";
 import type { Project } from "../lib/content";
 import Icon from "./Icon.astro";
+import StatTiles from "./StatTiles.astro";
 
-type Props = { project: Project };
-const { project } = Astro.props;
-const { title, summary, tools, featured, draft } = project.data;
+type Props = { project: Project; wide?: boolean };
+const { project, wide = false } = Astro.props;
+const { title, summary, tools, featured, draft, cover, cover_alt, highlights } = project.data;
+const href = `/projects/${project.id}/`;
 ---
 
-<article class="card">
-  <span class="arrow"><Icon name="arrow-up-right" /></span>
-  {(featured || draft) && (
-    <p class="labels">
-      {draft && <span class="badge">Draft</span>}
-      {featured && <span class="badge">Featured</span>}
-    </p>
+<article class:list={["card", "project-card", { wide }]}>
+  {cover && (
+    <div class="cover">
+      <Image src={cover} alt={cover_alt} widths={wide ? [480, 720, 960] : [400, 640]}
+        sizes={wide ? "(max-width: 800px) 100vw, 480px" : "(max-width: 640px) 100vw, 320px"} />
+    </div>
   )}
-  <h3><a href={`/projects/${project.id}/`}>{title}</a></h3>
-  <p class="summary">{summary}</p>
-  {tools.length > 0 && (
-    <ul class="tags" aria-label="Tools">
-      {tools.map((tool) => <li>{tool}</li>)}
-    </ul>
-  )}
+  <div class="body">
+    <span class="arrow"><Icon name="arrow-up-right" /></span>
+    {(featured || draft) && (
+      <p class="labels">
+        {draft && <span class="badge">Draft</span>}
+        {featured && <span class="badge">Featured</span>}
+      </p>
+    )}
+    <h3><a href={href}>{title}</a></h3>
+    <p class="summary">{summary}</p>
+    {wide && <StatTiles items={highlights.slice(0, 2)} compact />}
+    {tools.length > 0 && (
+      <ul class="tags" aria-label="Tools">
+        {tools.map((tool) => <li>{tool}</li>)}
+      </ul>
+    )}
+  </div>
 </article>

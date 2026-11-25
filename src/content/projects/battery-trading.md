@@ -4,6 +4,17 @@ summary: "Probabilistic electricity price forecasting, risk modelling and batter
 tools: ["Python", "pandas", "LightGBM", "SciPy", "Matplotlib", "Streamlit"]
 github: "https://github.com/phquyen/nem-battery-trading-sa"
 demo: "https://nem-battery-trading-sa-adl.streamlit.app/"
+cover: "../../assets/projects/battery-trading/dashboard.png"
+cover_alt: "Interactive dashboard showing test-year profit by strategy and a half-hour replay of one day"
+highlights:
+  - value: "+47.5%"
+    label: "simulated profit vs a typical-day rule (test year)"
+  - value: "525,888"
+    label: "five-minute intervals of AEMO data, 2021–2026"
+  - value: "50.7%"
+    label: "of perfect-foresight profit captured"
+  - value: "11.4%"
+    label: "lower forecast error than the best baseline"
 featured: true
 order: 1
 draft: false
@@ -11,17 +22,11 @@ draft: false
 
 <!-- Source: README.md and src/nem_battery/battery.py in the GitHub repo. Keep the numbers in sync if they change. -->
 
-## Key numbers
+## Overview
 
-- **+47.5%** simulated profit vs a typical-day rule in the held-out test year ($100,716 vs $68,292)
-- **525,888** five-minute intervals analysed
-- **5 years** of AEMO data (Oct 2021 – Sep 2026)
-- **50.7%** of the perfect-foresight profit captured
-- **11.4%** lower forecast error (MAE) than the best baseline
+A LightGBM forecast combined with a timing-robust linear-programming optimiser earned **$100,716** for a simulated 1 MW / 2 MWh battery over the held-out test year (Oct 2025 – Sep 2026): **47.5% more** than a typical-day rule ($68,292), with a smaller worst day (−$241 vs −$924) and fewer losing days (11.8% vs 17.5%).
 
-![Interactive dashboard: test-year results and a half-hour replay of any day](../../assets/projects/battery-trading/dashboard.png)
-
-*The [interactive dashboard](https://nem-battery-trading-sa-adl.streamlit.app/) lets you compare strategies and replay any day of the test year, half-hour by half-hour.*
+The [interactive dashboard](https://nem-battery-trading-sa-adl.streamlit.app/) lets you compare strategies and replay any day of the test year, half-hour by half-hour.
 
 ## The problem
 

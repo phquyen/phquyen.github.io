@@ -13,6 +13,13 @@ summary: "One or two sentences shown on the project card."
 tools: ["Python", "SQL"]        # shown as tags; can be []
 github: "https://github.com/phquyen/repo-name"   # optional: delete the line if none
 demo: "https://example.com"     # optional: delete the line if none
+# Optional picture: put it in src/assets/projects/<name>/ and point to it from here.
+# cover: "../../assets/projects/my-project/screenshot.png"
+# cover_alt: "What the picture shows"
+# Optional key numbers (up to 4), shown as big tiles. Only real, checkable numbers.
+# highlights:
+#   - value: "+12%"
+#     label: "what the number means"
 featured: false                 # true = listed first, with a "Featured" label
 order: 10                       # lower numbers appear first
 draft: true                     # true = hidden on the live site (still shown in npm run dev)

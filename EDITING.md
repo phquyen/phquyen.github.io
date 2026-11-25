@@ -33,7 +33,17 @@ Open `src/content/profile.yaml`. Each line is `field: "value"`.
 4. Set `draft: false` when it's ready to go live.
 
 Each project file automatically gets a card on the Projects tab and its own page.
-`featured: true` lists it first with a "Featured" label; otherwise `order` decides (lower first).
+`featured: true` gives it the wide spotlight card at the top of the Projects tab;
+otherwise `order` decides the position (lower first).
+
+Two optional extras make a project stand out (examples are in `_template.md`):
+
+- **`cover`**: a picture for the card and the top of the page. Put the image in
+  `src/assets/projects/<name>/` and point to it, e.g. `cover: "../../assets/projects/my-project/screenshot.png"`.
+  Add `cover_alt` describing what it shows. Images are compressed automatically.
+- **`highlights`**: up to 4 key numbers, shown as big tiles. Only use real, checkable numbers.
+
+Pages with 3 or more `##` headings get an "On this page" contents list beside the text on wide screens.
 
 ## Add a note
 

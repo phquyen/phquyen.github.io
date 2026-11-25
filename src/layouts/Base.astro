@@ -1,9 +1,10 @@
 ---
-// Shared page frame: <head>, header with Resume link + theme toggle, footer.
+// Shared page frame: <head>, header menu + theme toggle, footer.
 // Layout code: to change text, edit src/content/ instead.
 import "../styles/theme.css";
 import "../styles/global.css";
-import { getProfile } from "../lib/content";
+import Logo from "../components/Logo.astro";
+import { getProfile, getTopics } from "../lib/content";
 
 type Props = {
   title?: string; // page title; your name is added automatically
@@ -14,8 +15,21 @@ type Props = {
 const profile = await getProfile();
 const { title, description = profile.bio, canonical = Astro.url.pathname } = Astro.props;
 const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
-const onResume = Astro.url.pathname.startsWith("/resume");
 const year = new Date().getFullYear();
+
+// Menu: Notes only appears once at least one note is published (it opens the first topic).
+const topics = await getTopics();
+const path = Astro.url.pathname;
+const menu = [
+  { label: "Projects", href: "/projects/", current: path === "/" || path.startsWith("/projects") },
+  ...(topics.length ? [{ label: "Notes", href: `/notes/${topics[0].slug}/`, current: path.startsWith("/notes") }] : []),
+  { label: "Resume", href: profile.resume, current: path.startsWith("/resume") },
+];
+const links = [
+  { label: "GitHub", href: profile.github },
+  { label: "LinkedIn", href: profile.linkedin },
+  { label: "Email", href: profile.email && `mailto:${profile.email}` },
+].filter((l) => l.href);
 ---
 
 <!doctype html>
@@ -26,6 +40,7 @@ const year = new Date().getFullYear();
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(canonical, Astro.site)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Apply the saved theme before the page paints, so there's no flash.
          Dark is the default until the visitor picks light with the toggle. -->
     <script is:inline>
@@ -39,10 +54,16 @@ const year = new Date().getFullYear();
   <body>
     <header class="site">
       <nav class="wrap" aria-label="Main">
-        <a class="brand" href="/">{profile.name}</a>
+        <a class="brand" href="/" aria-label={`${profile.name}, home`}>
+          <Logo size={34} />
+          <span class="full">{profile.name}</span>
+          <span class="short" aria-hidden="true">{profile.name.replace(/\s*\(.*\)\s*$/, "")}</span>
+        </a>
         <div class="menu">
           <ul>
-            <li><a href={profile.resume} aria-current={onResume ? "page" : undefined}>Resume</a></li>
+            {menu.map((item) => (
+              <li><a href={item.href} aria-current={item.current ? "page" : undefined}>{item.label}</a></li>
+            ))}
           </ul>
           <button class="theme-toggle" type="button" aria-label="Switch colour theme" hidden>
             <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -57,7 +78,17 @@ const year = new Date().getFullYear();
     </main>
 
     <footer class="site">
-      <div class="wrap">&copy; {year} {profile.name}</div>
+      <div class="wrap footer-inner">
+        <div>
+          <p class="footer-name">{profile.name}</p>
+          <p>{profile.bio}</p>
+        </div>
+        <ul class="footer-links">
+          {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          <li><a href={profile.resume}>Resume</a></li>
+        </ul>
+        <p class="footer-copy">&copy; {year} {profile.name}</p>
+      </div>
     </footer>
 
     <script>
