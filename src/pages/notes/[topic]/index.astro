@@ -1,0 +1,31 @@
+---
+// One tab per folder in src/content/notes/, e.g. /notes/sql/
+import Tabs from "../../../layouts/Tabs.astro";
+import { getTopics, notePath, formatDate, type Topic } from "../../../lib/content";
+
+export async function getStaticPaths() {
+  const topics = await getTopics();
+  return topics.map((topic) => ({ params: { topic: topic.slug }, props: { topic } }));
+}
+
+type Props = { topic: Topic };
+const { topic } = Astro.props;
+---
+
+<Tabs active={topic.slug} title={`${topic.name} notes`}>
+  <h2 class="sr-only">{topic.name} notes</h2>
+  <ul class="note-list">
+    {topic.notes.map((note) => (
+      <li>
+        <time datetime={note.data.date.toISOString().slice(0, 10)}>{formatDate(note.data.date)}</time>
+        <div>
+          <h3>
+            <a href={notePath(note)}>{note.data.title}</a>
+            {note.data.draft && <span class="badge">Draft</span>}
+          </h3>
+          <p>{note.data.summary}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</Tabs>

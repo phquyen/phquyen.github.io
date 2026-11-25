@@ -1,0 +1,36 @@
+---
+// One page per note: /notes/<topic>/<filename>/
+import "katex/dist/katex.min.css";
+import { render } from "astro:content";
+import Base from "../../../layouts/Base.astro";
+import Icon from "../../../components/Icon.astro";
+import { getTopics, notePath, formatDate, type Note, type Topic } from "../../../lib/content";
+
+export async function getStaticPaths() {
+  const topics = await getTopics();
+  return topics.flatMap((topic) =>
+    topic.notes.map((note) => {
+      const [, , topicSlug, noteSlug] = notePath(note).split("/");
+      return { params: { topic: topicSlug, note: noteSlug }, props: { note, topic } };
+    }),
+  );
+}
+
+type Props = { note: Note; topic: Topic };
+const { note, topic } = Astro.props;
+const { title, summary, date, draft } = note.data;
+const { Content } = await render(note);
+---
+
+<Base title={title} description={summary}>
+  <a class="back" href={`/notes/${topic.slug}/`}><Icon name="arrow-left" /> {topic.name} notes</a>
+
+  <div class="page-title">
+    <h1>{title} {draft && <span class="badge">Draft</span>}</h1>
+    <p><time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time></p>
+  </div>
+
+  <section class="prose">
+    <Content />
+  </section>
+</Base>

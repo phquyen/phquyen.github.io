@@ -1,0 +1,57 @@
+---
+// Intro + buttons + tab bar, shared by the home page, /projects and each notes tab.
+// Tabs are ordinary links, so they work on phones and without JavaScript.
+// Layout code: to change text, edit src/content/profile.yaml.
+import Base from "./Base.astro";
+import Icon from "../components/Icon.astro";
+import { getProfile, getTopics } from "../lib/content";
+
+type Props = {
+  active: string; // "projects" or a notes topic slug, e.g. "sql"
+  title?: string;
+  description?: string;
+  canonical?: string;
+};
+
+const { active, title, description, canonical } = Astro.props;
+const profile = await getProfile();
+const topics = await getTopics();
+
+const tabs = [
+  { slug: "projects", label: "Projects", href: "/projects/" },
+  ...topics.map((t) => ({ slug: t.slug, label: t.name, href: `/notes/${t.slug}/` })),
+];
+
+const buttons = [
+  { label: "GitHub", href: profile.github },
+  { label: "LinkedIn", href: profile.linkedin },
+  { label: "Email", href: profile.email && `mailto:${profile.email}` },
+].filter((b) => b.href);
+---
+
+<Base title={title} description={description} canonical={canonical}>
+  <div class="hero">
+    <h1>{profile.greeting}</h1>
+    <p>{profile.bio}</p>
+    <div class="actions">
+      <a class="btn" href={profile.resume}>Resume <Icon name="arrow-right" /></a>
+      {buttons.map((b) => (
+        <a class="btn secondary" href={b.href} {...(b.label === "Email" ? {} : { target: "_blank", rel: "noopener" })}>
+          {b.label} <Icon name={b.label === "Email" ? "mail" : "arrow-up-right"} />
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <nav class="tabs" aria-label="Sections">
+    <ul>
+      {tabs.map((tab) => (
+        <li><a href={tab.href} aria-current={tab.slug === active ? "page" : undefined}>{tab.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+
+  <div class="tab-panel">
+    <slot />
+  </div>
+</Base>

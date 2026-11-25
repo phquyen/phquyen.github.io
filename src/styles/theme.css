@@ -1,0 +1,97 @@
+/* =====================================================================
+   THEME: every colour, font, size, spacing and corner radius lives here.
+   No other file contains a colour, so editing this file restyles the site.
+
+   HOW COLOURS WORK
+   Each colour is written as   light-dark(<light mode>, <dark mode>)
+   Dark mode is the default; the toggle in the header switches to light.
+   Example: to make the dark background a little lighter, change the
+   second value of --color-bg.
+
+   WHERE THE ACCENT (PINK) IS USED
+   Only on buttons, key stat numbers, small icons and link hovers.
+   Everything else is black, white and greys.
+
+   READY-MADE PALETTES
+   To switch, copy the two lines of the palette you want over the two
+   lines under "Accent colour" below. All four pass WCAG AA contrast
+   (4.5:1 or better) against these backgrounds in both modes.
+
+     Pink (current)
+       --color-accent:    light-dark(#c2185b, #ff5ca8);
+       --color-on-accent: light-dark(#ffffff, #0a0a0a);
+
+     Blue
+       --color-accent:    light-dark(#1d4ed8, #60a5fa);
+       --color-on-accent: light-dark(#ffffff, #0a0a0a);
+
+     Teal
+       --color-accent:    light-dark(#0f766e, #2dd4bf);
+       --color-on-accent: light-dark(#ffffff, #0a0a0a);
+
+     Purple
+       --color-accent:    light-dark(#7e22ce, #c084fc);
+       --color-on-accent: light-dark(#ffffff, #0a0a0a);
+
+   CUSTOM COLOURS
+   If you pick your own, check contrast at https://webaim.org/resources/contrastchecker/
+   Text needs at least 4.5:1 against the background in both modes.
+
+   CHANGING THE FONT
+   System fonts are used by default (fast, nothing to download).
+   To use a Google Font instead, e.g. Inter:
+     1. Uncomment the @import line directly below this comment.
+     2. Change --font-body to:  "Inter", system-ui, sans-serif;
+   ===================================================================== */
+
+/* @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"); */
+
+:root {
+  /* ---- Accent colour (buttons, stat numbers, small icons, link hovers) ---- */
+  --color-accent:    light-dark(#c2185b, #ff5ca8);
+  --color-on-accent: light-dark(#ffffff, #0a0a0a); /* text on pink buttons */
+
+  /* ---- Neutral colours ---- */
+  --color-bg:           light-dark(#ffffff, #0a0a0a); /* page background */
+  --color-surface:      light-dark(#fafafa, #141414); /* cards */
+  --color-text:         light-dark(#0a0a0a, #fafafa); /* main text */
+  --color-muted:        light-dark(#525252, #a3a3a3); /* secondary text */
+  --color-border:       light-dark(#e5e5e5, #262626); /* thin card borders and lines */
+  --color-border-hover: light-dark(#a3a3a3, #525252); /* card border on hover */
+
+  /* ---- Fonts ---- */
+  --font-body:    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-body);
+  --font-mono:    ui-monospace, "Cascadia Code", Consolas, monospace;
+  --heading-tracking: -0.025em; /* slightly tighter letters on big headings */
+
+  /* ---- Text sizes ---- */
+  --text-xs:   0.8rem;
+  --text-sm:   0.95rem;
+  --text-base: 1rem;
+  --text-lg:   1.15rem;
+  --text-xl:   1.6rem;
+  --text-stat: clamp(2rem, 5vw, 2.75rem);
+  --text-hero: clamp(2.5rem, 8vw, 4.5rem);
+  --line-height: 1.6;
+
+  /* ---- Spacing ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.75rem;
+  --space-7: 3.5rem;
+  --space-8: 4rem;
+  --space-9: 7rem;
+
+  /* ---- Corners ---- */
+  --radius-sm:   10px;  /* buttons */
+  --radius:      16px;  /* cards */
+  --radius-pill: 999px; /* tags, pill buttons */
+
+  /* ---- Layout ---- */
+  --page-width: 1040px;
+  --header-height: 60px;
+}

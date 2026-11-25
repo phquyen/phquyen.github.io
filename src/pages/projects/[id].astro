@@ -1,0 +1,52 @@
+---
+// One page per project file: /projects/<filename>/
+// The page body is the Markdown below the --- block in the project file.
+import "katex/dist/katex.min.css";
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import { getProjects, type Project } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+
+type Props = { project: Project };
+const { project } = Astro.props;
+const { title, summary, tools, github, demo, draft } = project.data;
+const { Content } = await render(project);
+---
+
+<Base title={title} description={summary}>
+  <a class="back" href="/projects/"><Icon name="arrow-left" /> All projects</a>
+
+  <div class="page-title">
+    <h1>{title} {draft && <span class="badge">Draft</span>}</h1>
+    <p>{summary}</p>
+
+    {(tools.length > 0 || github || demo) && (
+      <dl class="meta">
+        {tools.length > 0 && (
+          <div>
+            <dt>Tools</dt>
+            <dd><ul class="tags">{tools.map((tool) => <li>{tool}</li>)}</ul></dd>
+          </div>
+        )}
+        {(github || demo) && (
+          <div>
+            <dt>Links</dt>
+            <dd class="actions">
+              {demo && <a class="btn" href={demo} target="_blank" rel="noopener">Live demo <Icon name="arrow-up-right" /></a>}
+              {github && <a class="btn secondary" href={github} target="_blank" rel="noopener">View code <Icon name="arrow-up-right" /></a>}
+            </dd>
+          </div>
+        )}
+      </dl>
+    )}
+  </div>
+
+  <section class="prose">
+    <Content />
+  </section>
+</Base>

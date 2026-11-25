@@ -1,0 +1,25 @@
+---
+import type { Project } from "../lib/content";
+import Icon from "./Icon.astro";
+
+type Props = { project: Project };
+const { project } = Astro.props;
+const { title, summary, tools, featured, draft } = project.data;
+---
+
+<article class="card">
+  <span class="arrow"><Icon name="arrow-up-right" /></span>
+  {(featured || draft) && (
+    <p class="labels">
+      {draft && <span class="badge">Draft</span>}
+      {featured && <span class="badge">Featured</span>}
+    </p>
+  )}
+  <h3><a href={`/projects/${project.id}/`}>{title}</a></h3>
+  <p class="summary">{summary}</p>
+  {tools.length > 0 && (
+    <ul class="tags" aria-label="Tools">
+      {tools.map((tool) => <li>{tool}</li>)}
+    </ul>
+  )}
+</article>

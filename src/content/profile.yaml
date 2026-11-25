@@ -1,0 +1,48 @@
+# Every piece of "about me" text on the site comes from this file.
+# Lines starting with # are comments and are ignored.
+# Put text in "double quotes". An empty value ("") hides that button.
+
+name: "Quyen Pham (Quinn)"
+greeting: "Hi, Alpaca here."
+bio: "Turning messy data into answers people can actually use."
+
+# ---- Buttons under the intro ----
+email: ""      # TODO: your public email, e.g. "you@example.com" (empty = no Email button)
+github: "https://github.com/phquyen"
+linkedin: ""   # TODO: e.g. "https://www.linkedin.com/in/your-name" (empty = no LinkedIn button)
+
+# Where the Resume button goes. "/resume/" is the page built from the lists below.
+# To use a PDF instead: put resume.pdf in the public/ folder and write "/resume.pdf".
+resume: "/resume/"
+
+# ---- Card on the right of the Projects tab ----
+# TODO: rewrite the text in your own words. Empty text ("") hides the card.
+# projects_card:
+#   title: "What's this?"
+#   text: "Write-ups of my data projects: the question, the data, how I approached it and what came out of it. Open a card to read the full story."
+
+# ---- Resume page ----
+# TODO: add your jobs. You mentioned ~3 years of industry analytics experience.
+# Copy this block once per job (remove the # at the start of each line):
+#
+# experience:
+#   - role: "Job title"
+#     organisation: "Company name"
+#     location: "Adelaide, SA"
+#     start: "Mar 2023"
+#     end: "Present"
+#     points:
+#       - "What you did and the result, with a number if you can."
+#       - "Another achievement."
+experience: []
+
+# TODO: your skills, e.g. ["Python", "SQL", "Power BI"]
+skills: []
+
+# TODO: your education. Copy this block once per qualification:
+#
+# education:
+#   - qualification: "Bachelor of ..."
+#     institution: "University name"
+#     year: 2022
+education: []

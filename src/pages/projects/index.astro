@@ -1,0 +1,9 @@
+---
+// /projects: same as the home page (the Projects tab), so the tab has its own link.
+import Tabs from "../../layouts/Tabs.astro";
+import ProjectList from "../../components/ProjectList.astro";
+---
+
+<Tabs active="projects" title="Projects" canonical="/">
+  <ProjectList />
+</Tabs>
