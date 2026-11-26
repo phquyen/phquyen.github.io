@@ -1,0 +1,15 @@
+---
+// /sql/: the SQL tab, opened on the newest query.
+// Only built when `show_sql: true` in src/content/profile.yaml (always in `npm run dev`).
+import SqlPage from "../../components/sql/SqlPage.astro";
+import { getQueries } from "../../lib/sql";
+import { sqlTabShown } from "../../lib/content";
+
+export async function getStaticPaths() {
+  return (await sqlTabShown()) ? [{ params: { index: undefined } }] : [];
+}
+
+const [newest] = await getQueries();
+---
+
+<SqlPage query={newest} />

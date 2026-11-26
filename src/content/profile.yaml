@@ -6,13 +6,21 @@ name: "Quyen Pham (Quinn)"
 headline: "*Data-scientist* by day, *Gym-rat* by night"   # words between *asterisks* show in the accent colour (pink)
 bio: "Train models and muscles, both overfit if I'm not careful."  
 # ---- Buttons under the intro ----
-email: ""      # TODO: your public email, e.g. "you@example.com" (empty = no Email button)
+email: "quyenquyen2486@gmail.com"   # empty ("") = no Email button
 github: "https://github.com/phquyen"
-linkedin: ""   # TODO: e.g. "https://www.linkedin.com/in/your-name" (empty = no LinkedIn button)
+linkedin: "https://www.linkedin.com/in/thi-thuy-quyen-pham-0061401b4/"   # empty ("") = no LinkedIn button
 
 # Where the Resume button goes. "/resume/" is the page built from the lists below.
 # To use a PDF instead: put resume.pdf in the public/ folder and write "/resume.pdf".
 resume: "/resume/"
+
+# ---- "Open to work" badge (top right of every page) ----
+# true = show it, false = hide it (e.g. once you have a job).
+open_to_work: true
+
+# ---- SQL tab ----
+# false = hidden on the live site (still visible in `npm run dev`). Change to true to publish it.
+show_sql: false
 
 # ---- Card on the right of the Projects tab ----
 # TODO: rewrite the text in your own words. Empty text ("") hides the card.
@@ -20,28 +28,67 @@ resume: "/resume/"
 #   title: "What's this?"
 #   text: "Write-ups of my data projects: the question, the data, how I approached it and what came out of it. Open a card to read the full story."
 
-# ---- Resume page ----
-# TODO: add your jobs. You mentioned ~3 years of industry analytics experience.
-# Copy this block once per job (remove the # at the start of each line):
-#
-# experience:
-#   - role: "Job title"
-#     organisation: "Company name"
-#     location: "Adelaide, SA"
-#     start: "Mar 2023"
-#     end: "Present"
-#     points:
-#       - "What you did and the result, with a number if you can."
-#       - "Another achievement."
-experience: []
+# ---- Resume page (/resume/) ----
+# Sections show in this order: summary, education, experience, skills.
+# An empty list ([]) hides that section.
 
-# TODO: your skills, e.g. ["Python", "SQL", "Power BI"]
-skills: []
+location: "Adelaide, SA"   # shown under your name on the resume
 
-# TODO: your education. Copy this block once per qualification:
-#
-# education:
-#   - qualification: "Bachelor of ..."
-#     institution: "University name"
-#     year: 2022
-education: []
+summary: "Data analyst with about 2.5 years' experience across ride-hailing and retail analytics, and a recent Master of Data Science graduate from the University of Adelaide. Skilled in SQL, Python and R, with experience analysing survey data, checking data for accuracy, and explaining findings clearly to non-technical stakeholders."
+
+# One block per qualification, newest first.
+education:
+  - qualification: "Master of Data Science"
+    institution: "University of Adelaide"
+    location: "Adelaide, SA"
+    year: "2024 – 2026"
+    note: "Coursework: Statistics, Data Mining, Machine Learning Algorithms, Deep Learning, Applied AI and Machine Learning"
+  - qualification: "Data Science Diploma"
+    institution: "University of Science"
+    location: "Ho Chi Minh City, VN"
+    year: "2020 – 2022"
+    note: "Python and R, SQL and Databases, Math, Data pre-processing, and Big Data"
+  - qualification: "Business Analysis Certificate"
+    institution: "BAC Training and Consultancy Joint Stock Company"
+    location: "Ho Chi Minh City, VN"
+    year: "2020"
+    note: "Storytelling, Prototyping, Agile and Scrum (sprints)"
+
+# One block per job, newest first.
+experience:
+  - role: "Data Analyst"
+    organisation: "Be Group"
+    location: "Ho Chi Minh City, VN"
+    start: "Nov 2022"
+    end: "Jan 2024"
+    points:
+      - "Developed, maintained, and designed dynamic dashboards using Power BI and Google Data Studio, reducing manual workload."
+      - "Designed dimension tables and built team-specific data marts from a master dataset, tailored to each team's requests with access limited to relevant data, to streamline querying."
+      - "Analysed customer insights, churn and retention rates, and evaluated marketing campaigns, revenue, and profit."
+      - "Detected and prevented third-party marketing fraud by auditing AppsFlyer attribution data, building checks that flagged suspicious accounts before payout."
+      - "Reconciled and validated results produced by the accounting team, tracing discrepancies back to source data across multiple systems."
+  - role: "Data Analyst & Data Scientist"
+    organisation: "Bluecore"
+    location: "Ho Chi Minh City, VN"
+    start: "Aug 2021"
+    end: "Nov 2022"
+    points:
+      - "Worked as an outsourced data analyst supporting retail clients, delivering analytics and reporting on their behalf."
+      - "Analysed customer return patterns for retail clients to identify drivers of returns and inform product/service decisions."
+      - "Optimised marketing cost and campaign timing for retail clients, improving spend efficiency."
+      - "Built a recommendation system for retail clients to support personalised product suggestions."
+      - "Built data collection and ETL pipelines to ingest retailer data from Excel into the company platform, running daily validation checks."
+      - "Built dashboards and reporting in Metabase to support retail client analytics."
+
+# Skills in groups. Each group is one line on the resume.
+skills:
+  - group: "Programming & Data Science"
+    items: ["Python", "R", "data modelling", "ETL", "dbt", "machine learning", "deep learning", "NLP", "AI"]
+  - group: "Data & BI"
+    items: ["SQL", "Power BI", "DAX", "Power Query", "GCP", "BigQuery", "Microsoft Excel", "Looker", "Metabase"]
+  - group: "Commercial & Finance"
+    items: ["Revenue/margin/profit estimation", "budgeting & forecasting fundamentals", "incentive and promo cost analysis", "reconciliation and data validation"]
+  - group: "Analytics"
+    items: ["Fraud/anomaly auditing", "churn and customer behaviour analysis", "event/product analytics (Firebase)"]
+  - group: "Languages"
+    items: ["Vietnamese (native)", "English (fluent)"]

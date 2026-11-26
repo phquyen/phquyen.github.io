@@ -1,55 +1,41 @@
 ---
-// /resume: built from src/content/profile.yaml (experience, skills, education).
+// /resume: built from src/content/profile.yaml (summary, education, experience, skills).
 // Empty sections are hidden. "Save as PDF" uses the browser's print dialog.
 import Base from "../layouts/Base.astro";
 import { getProfile } from "../lib/content";
 
 const profile = await getProfile();
-const { experience, skills, education } = profile;
+const { summary, experience, skills, education } = profile;
 const contacts = [
   profile.email && { label: profile.email, href: `mailto:${profile.email}` },
-  profile.github && { label: profile.github.replace(/^https?:\/\/(www\.)?/, ""), href: profile.github },
-  profile.linkedin && { label: profile.linkedin.replace(/^https?:\/\/(www\.)?/, ""), href: profile.linkedin },
+  profile.linkedin && { label: "LinkedIn", href: profile.linkedin },
+  profile.github && { label: "GitHub", href: profile.github },
 ].filter((c): c is { label: string; href: string } => Boolean(c));
-const isEmpty = experience.length + skills.length + education.length === 0;
+const isEmpty = !summary && experience.length + skills.length + education.length === 0;
+
+// Skills can be plain words (shown as tags) or groups (one line each).
+const skillGroups = skills.filter((s) => typeof s !== "string");
+const skillTags = skills.filter((s): s is string => typeof s === "string");
 ---
 
 <Base title="Resume" description={`Resume of ${profile.name}.`}>
   <div class="page-title resume-head">
     <div>
       <h1>{profile.name}</h1>
-      <p>{profile.bio}</p>
-      {contacts.length > 0 && (
-        <p class="resume-links">
-          {contacts.map((c, i) => <>{i > 0 && " · "}<a href={c.href}>{c.label}</a></>)}
-        </p>
-      )}
+      <p class="resume-links">
+        {profile.location && <span>{profile.location}</span>}
+        {contacts.map((c, i) => <>{(i > 0 || profile.location) && " · "}<a href={c.href}>{c.label}</a></>)}
+      </p>
     </div>
     {!isEmpty && <button class="btn secondary print-button" type="button" hidden>Save as PDF</button>}
   </div>
 
   {isEmpty && <p class="empty">Resume details coming soon.</p>}
 
-  {experience.length > 0 && (
+  {summary && (
     <section class="resume-section">
-      <h2>Experience</h2>
-      {experience.map((job) => (
-        <article class="entry">
-          <div class="entry-head">
-            <h3>{job.role} · {job.organisation}</h3>
-            <span class="when">{job.start} – {job.end}</span>
-          </div>
-          {job.location && <p class="where">{job.location}</p>}
-          {job.points.length > 0 && <ul>{job.points.map((point) => <li>{point}</li>)}</ul>}
-        </article>
-      ))}
-    </section>
-  )}
-
-  {skills.length > 0 && (
-    <section class="resume-section">
-      <h2>Skills</h2>
-      <ul class="tags">{skills.map((skill) => <li>{skill}</li>)}</ul>
+      <h2>Summary</h2>
+      <p class="resume-summary">{summary}</p>
     </section>
   )}
 
@@ -59,12 +45,52 @@ const isEmpty = experience.length + skills.length + education.length === 0;
       {education.map((study) => (
         <article class="entry">
           <div class="entry-head">
-            <h3>{study.qualification} · {study.institution}</h3>
+            <h3>{study.institution}</h3>
+            {study.location && <span class="where">{study.location}</span>}
+          </div>
+          <div class="entry-head sub">
+            <span class="role">{study.qualification}</span>
             {study.year && <span class="when">{study.year}</span>}
           </div>
-          {study.note && <p class="where">{study.note}</p>}
+          {study.note && <p class="entry-note">{study.note}</p>}
         </article>
       ))}
+    </section>
+  )}
+
+  {experience.length > 0 && (
+    <section class="resume-section">
+      <h2>Experience</h2>
+      {experience.map((job) => (
+        <article class="entry">
+          <div class="entry-head">
+            <h3>{job.organisation}</h3>
+            {job.location && <span class="where">{job.location}</span>}
+          </div>
+          <div class="entry-head sub">
+            <span class="role">{job.role}</span>
+            <span class="when">{job.start} – {job.end}</span>
+          </div>
+          {job.points.length > 0 && <ul>{job.points.map((point) => <li>{point}</li>)}</ul>}
+        </article>
+      ))}
+    </section>
+  )}
+
+  {skills.length > 0 && (
+    <section class="resume-section">
+      <h2>Skills</h2>
+      {skillGroups.length > 0 && (
+        <dl class="skill-groups">
+          {skillGroups.map((g) => (
+            <div>
+              <dt>{g.group}</dt>
+              <dd>{g.items.join(", ")}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      {skillTags.length > 0 && <ul class="tags">{skillTags.map((skill) => <li>{skill}</li>)}</ul>}
     </section>
   )}
 </Base>

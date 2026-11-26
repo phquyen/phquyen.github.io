@@ -21,7 +21,9 @@ Open `src/content/profile.yaml`. Each line is `field: "value"`.
 
 - An empty value `""` hides that button (e.g. `linkedin: ""` means no LinkedIn button).
 - Lines starting with `#` are comments: the site ignores them.
-- The resume page is built from `experience`, `skills` and `education`. Empty sections are hidden.
+- The resume page is built from `location`, `summary`, `education`, `experience` and `skills`
+  (skills in groups: `- group: "Data & BI"` then `items: ["SQL", "Power BI"]`). Empty sections are hidden.
+- `open_to_work: true` shows the "Open to work" badge in the top right; `false` hides it.
 - `projects_card` is the "What's this?" card on the right of the Projects tab. Empty `text: ""` hides it.
 
 ## Add a project
@@ -63,6 +65,11 @@ The Math example note shows maths.
 The SQL tab (`/sql/`) has a workbench where visitors can edit and run queries against
 **RideNest**, a *fictional* ride-hailing dataset (tables `trips`, `riders`, `drivers`, `promos`).
 Every column is described in `docs/sql-dataset.md`.
+
+**Hidden for now:** the SQL tab only appears on the live site when `show_sql: true` in
+`src/content/profile.yaml`. While it is `false`, the tab and all `/sql/` pages are left out of the
+live site, but you still see them in `npm run dev`. To publish it, change it to `true` (and set
+`draft: false` on the queries you want shown).
 
 1. In `src/content/sql/`, copy `busiest-weekday.md` and rename the copy, e.g. `top-riders.md`.
    It gets its own page: `/sql/top-riders/`.

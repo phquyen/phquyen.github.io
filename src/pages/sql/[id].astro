@@ -1,9 +1,12 @@
 ---
 // /sql/<file>/: the SQL tab with one query loaded (one page per file in src/content/sql/).
+// Only built when `show_sql: true` in src/content/profile.yaml (always in `npm run dev`).
 import SqlPage from "../../components/sql/SqlPage.astro";
 import { getQueries, type SqlQuery } from "../../lib/sql";
+import { sqlTabShown } from "../../lib/content";
 
 export async function getStaticPaths() {
+  if (!(await sqlTabShown())) return [];
   const queries = await getQueries();
   return queries.map((query) => ({ params: { id: query.id }, props: { query } }));
 }

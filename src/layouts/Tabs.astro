@@ -4,7 +4,7 @@
 // Layout code: to change text, edit src/content/profile.yaml.
 import Base from "./Base.astro";
 import Icon from "../components/Icon.astro";
-import { getProfile, getTopics } from "../lib/content";
+import { getProfile, getTopics, sqlTabShown } from "../lib/content";
 
 type Props = {
   active: string; // "projects" or a notes topic slug, e.g. "sql"
@@ -22,7 +22,7 @@ const headlineParts = profile.headline.split(/\*([^*]+)\*/);
 
 const tabs = [
   { slug: "projects", label: "Projects", href: "/projects/" },
-  { slug: "sql", label: "SQL", href: "/sql/" },
+  ...((await sqlTabShown()) ? [{ slug: "sql", label: "SQL", href: "/sql/" }] : []),
   ...topics.map((t) => ({ slug: t.slug, label: t.name, href: `/notes/${t.slug}/` })),
 ];
 

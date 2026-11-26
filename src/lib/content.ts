@@ -67,3 +67,8 @@ export async function getTopics(): Promise<Topic[]> {
 export function formatDate(date: Date): string {
   return date.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
+
+/** Whether the SQL tab and its pages exist: `show_sql: true` in profile.yaml, or always in `npm run dev`. */
+export async function sqlTabShown(): Promise<boolean> {
+  return showDrafts || (await getProfile()).show_sql;
+}

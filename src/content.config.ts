@@ -33,6 +33,10 @@ const profile = defineCollection({
     github: optionalUrl("github", '"https://github.com/your-name"'),
     linkedin: optionalUrl("linkedin", '"https://www.linkedin.com/in/your-name"'),
     resume: z.string(hint("resume", '"/resume/"')).default("/resume/"),
+    // SQL tab: false hides it (and its pages) on the live site; it still shows in `npm run dev`.
+    show_sql: z.boolean(hint("show_sql", "true")).default(false),
+    // "Open to work" badge in the top right corner of every page.
+    open_to_work: z.boolean(hint("open_to_work", "true")).default(false),
     // The card on the right of the Projects tab. Empty text = no card.
     projects_card: z
       .object({
@@ -52,12 +56,30 @@ const profile = defineCollection({
         }),
       )
       .default([]),
-    skills: z.array(z.string(hint("skills", '["Python", "SQL"]'))).default([]),
+    // Resume extras: a line under your name and a short paragraph at the top.
+    location: z.string().default(""),
+    summary: z.string().default(""),
+    // Either a plain list ["Python", "SQL"] or groups: [{ group: "Data & BI", items: ["SQL"] }]
+    skills: z
+      .array(
+        z.union(
+          [
+            z.string(),
+            z.object({
+              group: text("group", '"Data & BI"'),
+              items: z.array(z.string(), hint("items", '["SQL", "Power BI"]')),
+            }),
+          ],
+          hint("skills", '[{ group: "Data & BI", items: ["SQL", "Power BI"] }]'),
+        ),
+      )
+      .default([]),
     education: z
       .array(
         z.object({
           qualification: text("qualification", '"Bachelor of ..."'),
           institution: text("institution", '"University name"'),
+          location: z.string().optional(),
           year: z.union([z.string(), z.number()]).optional(),
           note: z.string().optional(),
         }),

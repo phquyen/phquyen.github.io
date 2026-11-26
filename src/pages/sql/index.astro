@@ -1,9 +1,0 @@
----
-// /sql/: the SQL tab, opened on the newest query.
-import SqlPage from "../../components/sql/SqlPage.astro";
-import { getQueries } from "../../lib/sql";
-
-const [newest] = await getQueries();
----
-
-<SqlPage query={newest} />
