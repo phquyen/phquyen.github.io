@@ -27,14 +27,16 @@ const profile = defineCollection({
     name: text("name", '"Quyen Pham (Quinn)"'),
     headline: text("headline", `"*Data scientist* by day"`), // big text at the top of the home page
     bio: text("bio", '"Based in Adelaide. ..."'),
+    footer: z.string().default(""), // small line under your name at the bottom of every page (empty = bio)
     email: z
       .union([z.literal(""), z.email(hint("email", '"you@example.com"'))], hint("email", '"you@example.com"'))
       .default(""),
     github: optionalUrl("github", '"https://github.com/your-name"'),
     linkedin: optionalUrl("linkedin", '"https://www.linkedin.com/in/your-name"'),
     resume: z.string(hint("resume", '"/resume/"')).default("/resume/"),
-    // SQL tab: false hides it (and its pages) on the live site; it still shows in `npm run dev`.
+    // SQL tab and notes tabs: false hides them (and their pages) everywhere, preview included.
     show_sql: z.boolean(hint("show_sql", "true")).default(false),
+    show_notes: z.boolean(hint("show_notes", "true")).default(false),
     // "Open to work" badge in the top right corner of every page.
     open_to_work: z.boolean(hint("open_to_work", "true")).default(false),
     // The card on the right of the Projects tab. Empty text = no card.
@@ -113,6 +115,8 @@ const projects = defineCollection({
         )
         .max(4, "has more than 4 items. Keep the 4 most important numbers.")
         .default([]),
+      // Optional short bullet points for the resume page. Empty = the summary is used instead.
+      resume: z.array(z.string(), hint("resume", '["What you built.", "The main result."]')).default([]),
       featured: z.boolean(hint("featured", "true")).default(false),
       order: z.number(hint("order", "10")).default(100),
       draft: z.boolean(hint("draft", "false")).default(false),

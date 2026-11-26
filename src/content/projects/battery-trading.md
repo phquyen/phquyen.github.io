@@ -15,6 +15,11 @@ highlights:
     label: "of perfect-foresight profit captured"
   - value: "11.4%"
     label: "lower forecast error than the best baseline"
+# Short bullet points for the resume page (the numbers above stay on the project page).
+resume:
+  - "Forecast South Australian electricity prices with LightGBM on five years of real AEMO market data."
+  - "Used the forecasts to schedule a simulated grid battery with linear programming, earning 47.5% more profit than a simple rule in the test year."
+  - "Built an interactive Streamlit dashboard to compare strategies and replay any day."
 featured: true
 order: 1
 draft: false

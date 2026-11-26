@@ -46,8 +46,10 @@ export function notePath(note: Note): string {
   return `/notes/${slugify(topicOf(note))}/${slugify(file)}/`;
 }
 
-/** One topic per notes folder (A–Z), each with its notes newest first. */
+/** One topic per notes folder (A–Z), each with its notes newest first.
+ *  None at all while `show_notes: false` in profile.yaml (preview included). */
 export async function getTopics(): Promise<Topic[]> {
+  if (!(await getProfile()).show_notes) return [];
   const notes = await getCollection("notes", (n) => showDrafts || !n.data.draft);
   const byTopic = new Map<string, Note[]>();
   for (const note of notes) {
@@ -68,7 +70,7 @@ export function formatDate(date: Date): string {
   return date.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
 
-/** Whether the SQL tab and its pages exist: `show_sql: true` in profile.yaml, or always in `npm run dev`. */
+/** Whether the SQL tab and its pages exist: `show_sql: true` in profile.yaml (preview included). */
 export async function sqlTabShown(): Promise<boolean> {
-  return showDrafts || (await getProfile()).show_sql;
+  return (await getProfile()).show_sql;
 }

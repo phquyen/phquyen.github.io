@@ -5,6 +5,7 @@
 name: "Quyen Pham (Quinn)"
 headline: "*Data-scientist* by day, *Gym-rat* by night"   # words between *asterisks* show in the accent colour (pink)
 bio: "Train models and muscles, both overfit if I'm not careful."  
+footer: "Quinn - Enjoy training."   # one line at the bottom of every page (empty = your name + bio)
 # ---- Buttons under the intro ----
 email: "quyenquyen2486@gmail.com"   # empty ("") = no Email button
 github: "https://github.com/phquyen"
@@ -18,9 +19,10 @@ resume: "/resume/"
 # true = show it, false = hide it (e.g. once you have a job).
 open_to_work: true
 
-# ---- SQL tab ----
-# false = hidden on the live site (still visible in `npm run dev`). Change to true to publish it.
-show_sql: false
+# ---- Hidden sections ----
+# false = hidden everywhere (live site and preview). Change to true to publish.
+show_sql: false     # the SQL tab
+show_notes: false   # the notes tabs (e.g. Math)
 
 # ---- Card on the right of the Projects tab ----
 # TODO: rewrite the text in your own words. Empty text ("") hides the card.
@@ -62,7 +64,7 @@ experience:
     start: "Nov 2022"
     end: "Jan 2024"
     points:
-      - "Developed, maintained, and designed dynamic dashboards using Power BI and Google Data Studio, reducing manual workload."
+      - "Developed, maintained, and designed dynamic dashboards using Power BI and Google Data Studio, reducing 30% of manual workload."
       - "Designed dimension tables and built team-specific data marts from a master dataset, tailored to each team's requests with access limited to relevant data, to streamline querying."
       - "Analysed customer insights, churn and retention rates, and evaluated marketing campaigns, revenue, and profit."
       - "Detected and prevented third-party marketing fraud by auditing AppsFlyer attribution data, building checks that flagged suspicious accounts before payout."
@@ -83,9 +85,9 @@ experience:
 # Skills in groups. Each group is one line on the resume.
 skills:
   - group: "Programming & Data Science"
-    items: ["Python", "R", "data modelling", "ETL", "dbt", "machine learning", "deep learning", "NLP", "AI"]
+    items: ["Python", "R", "data modelling", "ETL", "machine learning", "deep learning", "NLP", "AI"]
   - group: "Data & BI"
-    items: ["SQL", "Power BI", "DAX", "Power Query", "GCP", "BigQuery", "Microsoft Excel", "Looker", "Metabase"]
+    items: ["SQL", "Power BI", "DAX", "Power Query", "BigQuery", "Microsoft Excel", "Looker", "Metabase"]
   - group: "Commercial & Finance"
     items: ["Revenue/margin/profit estimation", "budgeting & forecasting fundamentals", "incentive and promo cost analysis", "reconciliation and data validation"]
   - group: "Analytics"

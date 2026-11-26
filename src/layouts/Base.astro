@@ -71,8 +71,14 @@ const links = [
     <footer class="site">
       <div class="wrap footer-inner">
         <div>
-          <p class="footer-name">{profile.name}</p>
-          <p>{profile.bio}</p>
+          {profile.footer ? (
+            <p>{profile.footer}</p>
+          ) : (
+            <>
+              <p class="footer-name">{profile.name}</p>
+              <p>{profile.bio}</p>
+            </>
+          )}
         </div>
         <ul class="footer-links">
           {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}

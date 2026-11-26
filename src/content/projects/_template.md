@@ -20,6 +20,10 @@ demo: "https://example.com"     # optional: delete the line if none
 # highlights:
 #   - value: "+12%"
 #     label: "what the number means"
+# Optional bullet points for the resume page (2–3 short sentences). Empty = the summary is used.
+# resume:
+#   - "What you built and with which tools."
+#   - "The main result."
 featured: false                 # true = listed first, with a "Featured" label
 order: 10                       # lower numbers appear first
 draft: true                     # true = hidden on the live site (still shown in npm run dev)
